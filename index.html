@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Combined Bar and Line Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            margin-right: 0px;
+            padding: 0;
+            background-color: #f4f4f4;
+            width: 100%;
+            max-width: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            display: block;
+            background-color: #50b3a2;
+            color: white;
+            text-align: center;
+            width: 100%;
+            padding: 10px 10px;
+            z-index: 999;
+            height: 100px;
+        }
+
+        header h1 {
+            
+            padding: 0.2em;
+            font-size: 2em;
+        }
+
+        /* Main Content */
+        main{
+            width: auto;
+            margin-top: 60px,
+        }
+
+        /* Chart Container */
+        #chart-container {
+            
+            display: flex;
+            flex-direction: row;
+            align-items:flex-start ;
+            justify-content:space-between;  
+            margin-top: 130px;
+            height: 100%;
+            width: 100vh;
+            position: absolute;
+            left: 15%;
+            transform: scale(0.9);
+
+        }
+
+        #navbar{
+            position: relative;
+            bottom: 25px;
+            right: -21px;
+        }
+
+        .navbar.navbar-6 .navbar-toggler-icon {
+             background-image: url('https://mdbootstrap.com/img/svg/hamburger8.svg?color=E3005C');
+        }
+
+
+
+      
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            top: 0px;
+            max-width: min-content;
+        }
+        .custum-input{
+            padding: 0.25rem 0.5rem;
+            font-size: 12px;
+        }
+        .custom-button{
+            padding: 0 rem 0.5 rem;
+            font-size: 12px;
+        }
+        canvas {
+        max-width: 100vh;
+        max-height: 85%;
+        }
+
+        #myDoughnutChart{
+        max-width: 40%;        
+    }
+
+        input{
+          margin: 10px;
+          margin-right: 0px;
+          max-width: 80%;
+        }
+        button{
+            font-size: 8px;
+            width: fit-content;
+            border-radius: 9px;
+            margin-right: 0px;
+            padding: 0;
+            transform: scale(0.8);
+        }
+        #buttons{
+            display: flex;
+            flex-direction: row;
+            transform: scale(0.8);
+        }
+        
+        #clearBtn {
+            background-color: rgb(255, 0, 136);
+        }
+
+        /* Stile per il contenitore dei simboli */
+        #symbol-container {
+
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            background-color: #ccc;
+            padding: 0px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-left: 0px;
+            margin-right: 0px;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        /* Stile per ogni simbolo individuale all'interno del contenitore */
+        #symbol-container div {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #symbol-container div:hover {
+            transform: scale(1.2);
+        }
+
+
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #chart-container {
+                width: 100%;
+                margin-bottom: 1em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <main>
+        <header>
+            <h1> Svincolati per reparto e crediti residui</h1>
+            <!--Navbar-->
+            <nav id = 'navbar' class="navbar navbar-light navbar-1 white">
+
+                <!-- Navbar brand -->
+            
+                <!-- Collapse button -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent15"
+                aria-controls="navbarSupportedContent15" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+            </nav>
+        </header>
+>
+        <div id="chart-container">
+            
+            <div id="symbol-container">
+                    
+            </div>
+
+            <canvas id= myDoughnutChart></canvas>
+            <form class="d-flex flex-column align-items-center">
+                <div class="mb-3">
+                    <input type="text" class="form-control-sm" id="teamName" placeholder="Inserisci nome squadra">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control form-control-sm custom-input" id="creditsTotal" placeholder="Inserisci crediti totali">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control form-control-sm custom-input" id="slotP" placeholder="Inserisci numero Portieri">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control form-control-sm custom-input" id="slotD" placeholder="Inserisci numero Difensori">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control form-control-sm custom-input" id="slotC" placeholder="Inserisci numero Centrocampisti">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control form-control-sm custom-input" id="slotA" placeholder="Inserisci numero Attaccanti">
+                </div>
+                <div id="buttons" class="d-flex flex-row  align-items-center">
+                    <button type="button" class="btn btn-primary btn-sm custom-button mb-3" id="addTeamBtn" >Aggiungi Squadra</button>
+                    <button type="button" class="btn btn-success btn-sm custom-button mb-3" id="updateTeamBtn">Aggiorna Squadra</button>
+                    <button type="button" class="btn btn-danger btn-sm custom-button mb-3" id="removeTeamBtn">Rimuovi Squadra</button>
+                    <button type="button" class="btn btn-danger btn-sm custom-button mb-3" id="clearBtn" >Pulisci Grafico</button>
+                </div>
+           </form>
+           
+            <canvas id="myChart"></canvas>
+        </div>
+    </main>
+
+    <footer>
+        <p>Copyright © 2023</p>
+    </footer>
+<script>
+
+
+// Dati iniziali (vuoti in questo caso, potrebbero essere caricati da un database o altro)
+
+const teamNames = ['juventus', 'milan', 'inter', 'napoli', 'roma'];
+const credits = [120, 115, 110, 105, 100];
+const slotP = [3, 2, 3, 2, 4];
+const slotD = [7, 8, 6, 7, 8];
+const slotC = [6, 7, 5, 6, 7];
+const slotA = [4, 5, 4, 5, 3];
+
+const attaccantiSerieA = {
+    "Cristiano Ronaldo": 30,
+    "Romelu Lukaku": 28,
+    "Ciro Immobile": 27,
+    "Dusan Vlahovic": 26,
+    "Lautaro Martinez": 25,
+    "Andrea Belotti": 24,
+    "Josip Ilicic": 23,
+    "Luis Muriel": 23,
+    "Simy": 22,
+    "Gianluca Scamacca": 22,
+    "Giovanni Simeone": 21,
+    "Arkadiusz Milik": 21,
+    "Kevin Lasagna": 20,
+    "Eduardo Salvio": 20,
+    "Ante Rebic": 19,
+    "Samuel Di Carmine": 19,
+    "Fernando Llorente": 18,
+    "Goran Pandev": 18,
+    "Duvan Zapata": 17,
+    "Riccardo Orsolini": 17
+};
+
+
+
+// Variabile globale per l'istanza del grafico
+let myChart;
+let myDoughnutChart
+const options = {
+  plugins: {
+    legend: {
+      display: true,
+      labels:{
+        boxWidth:10,
+        boxHeight:10,
+
+      } 
+    },
+  },
+};
+
+//Funzione per pulire il form dopo ogni aggiornamento o inserminto
+function clearFormFields() {
+    document.getElementById('teamName').value = '';
+    document.getElementById('creditsTotal').value = "inserisci crediti residui";
+    document.getElementById('slotP').value = "inserisci numero portieri svincolati";
+    document.getElementById('slotD').value = "inserisci numero difensori svincolati";
+    document.getElementById('slotC').value = "Inserisci numero centrocampisti svincolati";
+    document.getElementById('slotA').value = "Inserisci numero attaccanti svincolati";
+}
+// creazione grafico  ad anello
+function createDoughnutChart() {
+   
+
+
+const ctx = document.getElementById('myDoughnutChart').getContext('2d');
+
+myDoughnutChart = new Chart(ctx, {
+
+    
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(attaccantiSerieA), // Chiavi dell'array associativo come etichette
+            datasets: [{
+                label: 'Attaccanti rimanenti',
+                data: Object.values(attaccantiSerieA), // Valori dell'array associativo come dati
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)',
+                ],
+            }],
+        },
+        
+        options: options,
+
+       
+    });
+
+
+
+};
+
+// Funzione per creare il grafico
+function createChart() {
+    // if (myChart) {
+    //     myChart.destroy();
+    // }
+    const ctx = document.getElementById('myChart').getContext('2d');
+    myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: teamNames,
+            datasets: [
+                {
+                    label: 'Portieri (P)',
+                    data: slotP,
+                    backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                },
+                {
+                    label: 'Difensori (D)',
+                    data: slotD,
+                    backgroundColor: 'rgba(255, 193, 7, 0.5)',
+                },
+                {
+                    label: 'Centrocampisti (C)',
+                    data: slotC,
+                    backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                },
+                {
+                    label: 'Attaccanti (A)',
+                    data: slotA,
+                    backgroundColor: 'rgba(220, 53, 69, 0.5)',
+                },
+                {
+                    label: 'Crediti Residui',
+                    data: credits,
+                    type: 'line',
+                    borderColor: 'rgba(0, 0, 0, 0.7)',
+                    fill: false,
+                    yAxisID: 'y-axis-2'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks:{
+                        display:true,
+                        
+                   
+                        font:{
+                            weight: 'bold',
+                            
+                            
+                        }
+                        
+                    }
+                },
+                y:{
+                    display:false,
+                },
+                'y-axis-1': {
+                    type: 'linear',
+                    position: 'left',
+                    
+                    ticks:{
+                        display: true,
+                        min:0,
+                        max: 10,
+                        stepSize: 1,
+                    },
+                    grid: {
+                    drawOnChartArea: true, // Nasconde le linee della griglia orizzontali
+            },
+                },
+                'y-axis-2': {
+                    display:false,
+
+                }
+            },
+            plugins:{
+                legend:{
+                    display:true,
+                    position: 'bottom',
+                    
+                    fullSize: false,
+                    labels:{
+                        boxWidth: 20,
+                         textAlign: 'right',
+
+                    }
+                }
+            }
+        }
+        
+    });
+}
+
+// Funzione per cancellare i dati dal grafico
+function clearData() {
+    myChart.data.labels = [];
+    myChart.data.datasets.forEach((dataset) => {
+        dataset.data = [];
+    });
+    myChart.update();
+
+    const symbolContainer = document.getElementById('symbol-container');
+    while (symbolContainer.firstChild) {
+        symbolContainer.removeChild(symbolContainer.firstChild);
+}
+
+    document.querySelector('input').value = ""
+}
+
+// Funzione per aggiungere una nuova squadra
+function addTeam() {
+
+    if (!validateFormFields()) {
+        return;
+    }
+    
+    const teamName = document.getElementById('teamName').value.toLowerCase()
+    if (myChart.data.labels.includes(teamName)) {
+        alert('Il nome della squadra esiste già.');
+        return;
+    }
+    
+    // Aggiungi il simbolo colorato
+    const symbolContainer = document.getElementById('symbol-container');
+    const newSymbol = document.createElement('div');
+    newSymbol.style.width = '20px';
+    newSymbol.style.height = '20px';
+    let coloreSquadra = getRandomColor();
+    newSymbol.style.backgroundColor = coloreSquadra
+    newSymbol.title = teamName
+
+    lastIndexArray = (teamNames.length() - 1)
+    myChart[lastIndexArray].options.scales.ticks.color = coloreSquadra
+
+    // Aggiungi un listener dell'evento click al simbolo
+    newSymbol.addEventListener('click', function() {
+        fillFormWithTeamData(teamName);
+    });
+
+    symbolContainer.appendChild(newSymbol);
+    
+    const creditsTotal = Number(document.getElementById('creditsTotal').value);
+    const slotP = Number(document.getElementById('slotP').value);
+    const slotD = Number(document.getElementById('slotD').value);
+    const slotC = Number(document.getElementById('slotC').value);
+    const slotA = Number(document.getElementById('slotA').value);
+
+    
+
+
+    myChart.data.labels.push(teamName);
+    myChart.data.datasets[0].data.push(slotP);
+    myChart.data.datasets[1].data.push(slotD);
+    myChart.data.datasets[2].data.push(slotC);
+    myChart.data.datasets[3].data.push(slotA);
+    myChart.data.datasets[4].data.push(creditsTotal);
+    
+
+    clearFormFields();
+    myChart.update();
+
+}
+
+// Funzione per generare un colore casuale
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+// Funzione per aggiornare una squadra esistente
+function updateTeam() {
+
+    if (!validateFormFields()) { 
+        return;
+    }
+
+    const teamName = document.getElementById('teamName').value.toLowerCase();
+    const index = myChart.data.labels.indexOf(teamName);
+
+
+    
+    if (index !== -1 ) {
+        const creditsTotal = Number(document.getElementById('creditsTotal').value);
+        const slotP = Number(document.getElementById('slotP').value);
+        const slotD = Number(document.getElementById('slotD').value);
+        const slotC = Number(document.getElementById('slotC').value);
+        const slotA = Number(document.getElementById('slotA').value);
+        
+
+            myChart.data.datasets[0].data[index] = slotP;
+            myChart.data.datasets[1].data[index] = slotD;
+            myChart.data.datasets[2].data[index] = slotC;
+            myChart.data.datasets[3].data[index] = slotA;
+            myChart.data.datasets[4].data[index] = creditsTotal;
+
+            clearFormFields();
+            
+
+            myChart.update();
+
+
+    } else {
+        alert('Squadra non trovata.')
+    }
+}
+
+// Funzione per rimuovere una squadra
+function removeTeam() {
+    const teamName = document.getElementById('teamName').value;
+    if (!myChart.data.labels.includes(teamName)) {
+        alert('Squadra non trovata.');
+        return;
+    }
+    const index = myChart.data.labels.indexOf(teamName);
+
+    if (index !== -1) {
+        myChart.data.labels.splice(index, 1);
+        myChart.data.datasets.forEach(dataset => {
+            dataset.data.splice(index, 1);
+        });
+
+        myChart.update();
+    } else {
+        alert('Squadra non trovata.');
+    }
+    const symbolContainer = document.getElementById('symbol-container');
+    while (symbolContainer.firstChild) {
+        symbolContainer.removeChild(symbolContainer.firstChild);
+}
+}
+//funzione per validare form
+function validateFormFields() {
+    const teamName = document.getElementById('teamName').value;
+    const creditsTotal = Number(document.getElementById('creditsTotal').value);
+    const slotP = Number(document.getElementById('slotP').value);
+    const slotD = Number(document.getElementById('slotD').value);
+    const slotC = Number(document.getElementById('slotC').value);
+    const slotA = Number(document.getElementById('slotA').value);
+
+    if (!teamName || creditsTotal < 0 || slotP < 0 || slotD < 0 || slotC < 0 || slotA < 0) {
+        alert('Per favore, inserisci tutti i campi correttamente.');
+        return false;
+    }
+    return true;
+}
+
+function fillFormWithTeamData(teamName) {
+    const index = myChart.data.labels.indexOf(teamName);
+    if (index !== -1) {
+        document.getElementById('teamName').value = teamName;
+        document.getElementById('creditsTotal').value = myChart.data.datasets[4].data[index];
+        document.getElementById('slotP').value = myChart.data.datasets[0].data[index];
+        document.getElementById('slotD').value = myChart.data.datasets[1].data[index];
+        document.getElementById('slotC').value = myChart.data.datasets[2].data[index];
+        document.getElementById('slotA').value = myChart.data.datasets[3].data[index];
+    }
+}
+// Aggiungi i listener per i pulsanti e crea il grafico iniziale
+window.onload = function() {
+    createChart();
+
+    createDoughnutChart(attaccantiSerieA);
+
+    document.getElementById('addTeamBtn').addEventListener('click', addTeam)
+    document.getElementById('updateTeamBtn').addEventListener('click', updateTeam)
+    document.getElementById('removeTeamBtn').addEventListener('click', removeTeam)
+    document.getElementById('clearBtn').addEventListener('click', clearData)
+
+
+
+ }
+</script>
+
+</body>
+</html>

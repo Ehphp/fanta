@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Combined Bar and Line Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <header>
+        <h1> Svincolati per reparto e crediti residui</h1>
+
+    </header>
+
+
+    <main>
+
+
+        <div id="chart-container">
+            <!-- <div id="symbol-container">
+            </div> -->
+            <canvas id=myDoughnutChart></canvas>
+            <form class="mainForm">
+                <div class="mb-3">
+                    <input type="text" class="" id="teamName" placeholder="Inserisci nome squadra">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control " id="creditsTotal"
+                        placeholder=" crediti residui">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control " id="slotP"
+                        placeholder=" Portieri">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control " id="slotD"
+                        placeholder=" Difensori">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control " id="slotC"
+                        placeholder=" Centrocampisti">
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control " id="slotA"
+                        placeholder=" Attaccanti">
+                </div>
+                <div  class="btnDiv">
+                    <button type="button" class="btn " id="addTeamBtn">Aggiungi
+                        Squadra</button>
+                    <button type="button" class="btn " id="updateTeamBtn">Aggiorna
+                        Squadra</button>
+                    <button type="button" class="btn " id="removeTeamBtn">Rimuovi
+                        Squadra</button>
+                    <button type="button" class="btn " id="clearBtn">Pulisci
+                        Grafico</button>
+                </div>
+            </form>
+
+            <canvas id="myChart"></canvas>
+        </div>
+    </main>
+
+    <footer>
+        <p>Copyright © 2023</p>
+    </footer>
+    <script>
+
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
